@@ -4,9 +4,9 @@ services:
     image: mongo:7.0.16-jammy
     ports:
       - 27017:27017
-    environment: 
-      - MONGO_INITDB_ROOT_USERNAME=${MONGO_DB_USERNAME}
-      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_DB_PASSWORD}
+      # environment:
+      # - MONGO_INITDB_ROOT_USERNAME=${MONGO_DB_USERNAME}
+      # - MONGO_INITDB_ROOT_PASSWORD=${MONGO_DB_PASSWORD}
     volumes:
       - data-db:/data/db
     networks:
@@ -18,16 +18,17 @@ services:
       dockerfile: ./Dockerfile
     image: node-js:1
     ports:
-      - 8000:8000
+      - 8080:8080
     environment:
       - MONGO_URI=${DB_URL}
       - JWT_SECRET="Smriti"
+      - PORT=8080
     networks:
       - backend
       - frontend
     depends_on:
       - db
-  
+
   react:
     build:
       context: ./frontend
