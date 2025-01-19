@@ -1,0 +1,48 @@
+services:
+  db:
+    container_name: mydatabase
+    image: mongo:7.0.16-jammy
+    ports:
+      - 27017:27017
+    environment: 
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_DB_USERNAME}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_DB_PASSWORD}
+    volumes:
+      - data-db:/data/db
+    networks:
+      - backend
+
+  node-js:
+    build:
+      context: ./backend
+      dockerfile: ./Dockerfile
+    image: node-js:1
+    ports:
+      - 8000:8000
+    environment:
+      - MONGO_URI=${DB_URL}
+      - JWT_SECRET="Smriti"
+    networks:
+      - backend
+      - frontend
+    depends_on:
+      - db
+  
+  react:
+    build:
+      context: ./frontend
+      dockerfile: ./Dockerfile
+    image: react:1
+    ports:
+      - "80:3000"
+    networks:
+      - frontend
+    depends_on:
+      - node-js
+
+volumes:
+  data-db:
+networks:
+  backend:
+  frontend:
+    driver: bridge
